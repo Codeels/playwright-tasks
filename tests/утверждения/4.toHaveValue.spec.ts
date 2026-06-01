@@ -11,6 +11,17 @@ test('1. Проверка начальных значений полей', async
   // 3. Найти поле "Телефон" и проверить значение "+7"
   // 4. Найти поле "Комментарии" и проверить что оно пустое
   // 5. Найти выпадающий список "Страна" и проверить значение "ru"
+  const userName = page.getByLabel('Имя пользователя');
+  const userEmail = page.getByLabel('Электронная почта');
+  const userPhone = page.getByLabel('Телефон');
+  const comments = page.getByLabel('Комментарии');
+  const country = page.getByLabel('Страна');
+
+  await expect(userName).toHaveValue('Гость');
+  await expect(userEmail).toHaveValue('');
+  await expect(userPhone).toHaveValue('+7');
+  await expect(comments).toHaveValue('');
+  await expect(country).toHaveValue('ru');
 });
 
 test('2. Проверка изменения значений полей', async ({ page }) => {
@@ -21,6 +32,23 @@ test('2. Проверка изменения значений полей', async
   // 4. Заполнить поле "Комментарии" значением "Тестовый комментарий"
   // 5. Выбрать в списке "Страна" значение "Казахстан" (kz)
   // 6. Проверить что все поля содержат новые значения
+  const userName = page.getByLabel('Имя пользователя');
+  const userEmail = page.getByLabel('Электронная почта');
+  const userPhone = page.getByLabel('Телефон');
+  const comments = page.getByLabel('Комментарии');
+  const country = page.getByLabel('Страна');
+
+  await userName.fill('Алексей');
+  await userEmail.fill('alex@example.com');
+  await userPhone.fill('+7 (123) 456-78-90');
+  await comments.fill('Тестовый комментарий');
+  await country.selectOption('kz');
+
+  await expect(userName).toHaveValue('Алексей');
+  await expect(userEmail).toHaveValue('alex@example.com');
+  await expect(userPhone).toHaveValue('+7 (123) 456-78-90');
+  await expect(comments).toHaveValue('Тестовый комментарий');
+  await expect(country).toHaveValue('kz');
 });
 
 test('3. Проверка сброса формы', async ({ page }) => {
@@ -33,6 +61,21 @@ test('3. Проверка сброса формы', async ({ page }) => {
   // 6. Проверить что поле "Электронная почта" пустое
   // 7. Проверить что поле "Телефон" содержит "+7"
   // 8. Проверить что список "Страна" содержит значение "ru"
+  const userName = page.getByLabel('Имя пользователя');
+  const userEmail = page.getByLabel('Электронная почта');
+  const userPhone = page.getByLabel('Телефон');
+  const country = page.getByLabel('Страна');
+  const resetButton = page.getByRole('button', { name: 'Сбросить' });
+
+  await userName.fill('Петр');
+  await userEmail.fill('test@test.ru');
+  await country.selectOption('by');
+  await resetButton.click();
+
+  await expect(userName).toHaveValue('Гость');
+  await expect(userEmail).toHaveValue('');
+  await expect(userPhone).toHaveValue('+7');
+  await expect(country).toHaveValue('ru');
 });
 
 test('4. Проверка обновления данных', async ({ page }) => {
@@ -42,6 +85,20 @@ test('4. Проверка обновления данных', async ({ page }) =
   // 3. Заполнить поле "Комментарии" значением "Важный комментарий"
   // 4. Нажать кнопку "Обновить данные"
   // 5. Проверить что в блоке вывода содержится текст с введенными данными
+  const userName = page.getByLabel('Имя пользователя');
+  const userEmail = page.getByLabel('Электронная почта');
+  const comments = page.getByLabel('Комментарии');
+  const updateDataButton = page.getByRole('button', { name: 'Обновить данные' });
+  const updatedData = page.locator('#output');
+
+  await userName.fill('Мария');
+  await userEmail.fill('maria@mail.ru');
+  await comments.fill('Важный комментарий');
+  await updateDataButton.click();
+
+  await expect(updatedData).toContainText(
+    'Данные обновлены: Мария, maria@mail.ru, +7, ru. Комментарий: Важный комментарий',
+  );
 });
 
 test('5. Проверка пустых значений', async ({ page }) => {
@@ -53,4 +110,19 @@ test('5. Проверка пустых значений', async ({ page }) => {
   // 5. Проверить что поле "Телефон" пустое
   // 6. Проверить что список "Страна" содержит пустое значение
   // 7. Проверить что изначально пустое поле "Электронная почта" осталось пустым
+
+  const userName = page.getByLabel('Имя пользователя');
+  const userEmail = page.getByLabel('Электронная почта');
+  const userPhone = page.getByLabel('Телефон');
+  const comments = page.getByLabel('Комментарии');
+  const country = page.getByLabel('Страна');
+
+  await userName.clear();
+  await userPhone.clear();
+  await country.selectOption(null); //странно, но работает
+
+  await expect(userName).toHaveValue('');
+  await expect(userPhone).toHaveValue('');
+  await expect(country).toHaveValue('');
+  await expect(userEmail).toHaveValue('');
 });
