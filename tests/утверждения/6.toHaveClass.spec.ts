@@ -10,6 +10,14 @@ test('1. Проверка начальных классов элементов',
   // 2. Проверить что box1 не имеет класса "error"
   // 3. Найти элемент box2 и проверить что он имеет класс "error"
   // 4. Найти элемент box3 и проверить что он имеет класс "hidden"
+  const box1 = page.locator('#box1');
+  const box2 = page.locator('#box2');
+  const box3 = page.locator('#box3');
+
+  await expect(box1).toHaveClass(/active/);
+  await expect(box1).not.toHaveClass(/error/);
+  await expect(box2).toHaveClass(/error/);
+  await expect(box3).toHaveClass(/hidden/);
 });
 
 test('2. Проверка переключения классов box1', async ({ page }) => {
@@ -20,6 +28,17 @@ test('2. Проверка переключения классов box1', async (
   // 4. Проверить что box1 больше не имеет класса "active"
   // 5. Еще раз нажать кнопку
   // 6. Проверить что классы вернулись к исходным
+
+  const box1 = page.locator('#box1');
+  const box1Button = page.getByRole('button', { name: 'Переключить box1' });
+
+  await expect(box1).toHaveClass(/active/);
+  await box1Button.click();
+  await expect(box1).toHaveClass(/error/);
+  await expect(box1).not.toHaveClass(/active/);
+  await box1Button.click();
+  await expect(box1).toHaveClass(/active/);
+  await expect(box1).not.toHaveClass(/error/);
 });
 
 test('3. Проверка показа/скрытия элемента', async ({ page }) => {
@@ -29,6 +48,15 @@ test('3. Проверка показа/скрытия элемента', async (
   // 3. Проверить что box3 больше не имеет класса "hidden"
   // 4. Еще раз нажать кнопку
   // 5. Проверить что класс "hidden" снова присутствует
+
+  const box3 = page.locator('#box3');
+  const box3Button = page.getByRole('button', { name: 'Показать/скрыть box3' });
+
+  await expect(box3).toHaveClass(/hidden/);
+  await box3Button.click();
+  await expect(box3).not.toHaveClass(/hidden/);
+  await box3Button.click();
+  await expect(box3).toHaveClass(/hidden/);
 });
 
 test('4. Проверка классов карточки пользователя', async ({ page }) => {
@@ -39,6 +67,17 @@ test('4. Проверка классов карточки пользовател
   // 4. Нажать кнопку "Отметить как просроченный"
   // 5. Проверить что карточка имеет оба класса: "premium" и "expired"
   // 6. Проверить что классы содержатся в любом порядке
+
+  const userCard = page.locator('#user-card');
+  const premiumButton = page.getByRole('button', { name: 'Перейти на Премиум' });
+  const expiredButton = page.getByRole('button', { name: 'Отметить как просроченный' });
+
+  await expect(userCard).not.toHaveClass(/premium/);
+  await premiumButton.click();
+  await expect(userCard).toHaveClass(/premium/);
+  await expiredButton.click();
+  await expect(userCard).toHaveClass(/premium/);
+  await expect(userCard).toHaveClass(/expired/);
 });
 
 test('5. Проверка элемента с несколькими классами', async ({ page }) => {
@@ -50,4 +89,18 @@ test('5. Проверка элемента с несколькими класс�
   // 4. Проверить что класс "large" удален
   // 5. Проверить что класс "rounded" остался
   // 6. Проверить что элемент имеет класс "box" (основной класс)
+  const element = page.locator('#multi-class');
+  const changeClassesButton = page.getByRole('button', { name: 'Изменить классы' });
+
+  await expect(element).toHaveClass(/box/);
+  await expect(element).toHaveClass(/warning/);
+  await expect(element).toHaveClass(/large/);
+  await expect(element).toHaveClass(/rounded/);
+
+  await changeClassesButton.click();
+  await expect(element).not.toHaveClass(/warning/);
+  await expect(element).toHaveClass(/error/);
+  await expect(element).not.toHaveClass(/large/);
+  await expect(element).toHaveClass(/rounded/);
+  await expect(element).toHaveClass(/box/);
 });
