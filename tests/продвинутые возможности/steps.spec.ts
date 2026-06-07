@@ -19,9 +19,24 @@ test.describe('Тестирование формы регистрации', () =
     // - Все поля формы пустые
     // - Сообщения об ошибке и успехе скрыты
     // - Секция профиля не отображается
+    const name = page.getByPlaceholder('Имя пользователя');
+    const email = page.getByPlaceholder('Email');
+    const password = page.getByPlaceholder('Пароль');
+    const registrationButton = page.getByRole('button', { name: 'Зарегистрироваться' });
+    const errorMessage = page.locator('#error-message');
+    const successMessage = page.locator('#success-message');
+    const profileSection = page.locator('#profile-section');
+    const profileName = page.locator('#profile-username');
+    const profileEmail = page.locator('#profile-email');
+    const logoutButton = page.locator('#logout-btn');
 
-    await test.step('TODO(student): ПРЕДУСЛОВИЯ', async () => {
-      throw new Error('TODO(student): реализуйте шаг "ПРЕДУСЛОВИЯ" по инструкции выше');
+    await test.step('ПРЕДУСЛОВИЯ: Проверить начальное состояние формы', async () => {
+      await expect(name).toBeEmpty();
+      await expect(email).toBeEmpty();
+      await expect(password).toBeEmpty();
+      await expect(errorMessage).toBeHidden();
+      await expect(successMessage).toBeHidden();
+      await expect(profileSection).toBeHidden();
     });
 
     // Создай test.step ШАГ 1: Попытка регистрации с пустыми полями
@@ -32,8 +47,10 @@ test.describe('Тестирование формы регистрации', () =
     // - Появилось сообщение о необходимости заполнить все поля
     // - Сообщение об успехе осталось скрытым
 
-    await test.step('TODO(student): ШАГ 1', async () => {
-      throw new Error('TODO(student): реализуйте шаг "ШАГ 1" по инструкции выше');
+    await test.step('ШАГ 1: Попытка регистрации с пустыми полями', async () => {
+      await registrationButton.click();
+      await expect(errorMessage).toBeVisible();
+      await expect(successMessage).toBeHidden();
     });
 
     // Создай test.step ШАГ 2: Попытка регистрации с некорректными данными
@@ -45,8 +62,12 @@ test.describe('Тестирование формы регистрации', () =
     // Что проверяем:
     // - Соответствующие сообщения об ошибках
 
-    await test.step('TODO(student): ШАГ 2', async () => {
-      throw new Error('TODO(student): реализуйте шаг "ШАГ 2" по инструкции выше');
+    await test.step('ШАГ 2: Попытка регистрации с некорректными данными', async () => {
+      await name.fill('test');
+      await email.fill('mailmail.com');
+      await password.fill('x');
+      await registrationButton.click();
+      await expect(errorMessage).toHaveText('Пароль должен быть не менее 6 символов');
     });
 
     // Создай test.step ШАГ 3: Успешная регистрация
@@ -58,8 +79,14 @@ test.describe('Тестирование формы регистрации', () =
     // - Появилось сообщение об успехе
     // - Отобразилась секция профиля
 
-    await test.step('TODO(student): ШАГ 3', async () => {
-      throw new Error('TODO(student): реализуйте шаг "ШАГ 3" по инструкции выше');
+    await test.step('ШАГ 3: Успешная регистрация', async () => {
+      await name.fill('testName');
+      await email.fill('mail@mail.com');
+      await password.fill('123456');
+      await registrationButton.click();
+      await expect(errorMessage).toBeHidden();
+      await expect(successMessage).toBeVisible();
+      await expect(profileSection).toBeVisible();
     });
 
     // Создай test.step ШАГ 4: Проверка данных профиля
@@ -67,8 +94,9 @@ test.describe('Тестирование формы регистрации', () =
     // Что проверяем:
     // - Данные в профиле соответствуют введенным при регистрации
 
-    await test.step('TODO(student): ШАГ 4', async () => {
-      throw new Error('TODO(student): реализуйте шаг "ШАГ 4" по инструкции выше');
+    await test.step('ШАГ 4: Проверка данных профиля', async () => {
+      await expect(profileName).toHaveText('testName');
+      await expect(profileEmail).toHaveText('mail@mail.com');
     });
 
     // Создай test.step ШАГ 5: Выход из системы
@@ -78,8 +106,12 @@ test.describe('Тестирование формы регистрации', () =
     // Что проверяем:
     // - Форма регистрации сброшена
     // - Секция профиля скрыта
-    await test.step('TODO(student): ШАГ 5', async () => {
-      throw new Error('TODO(student): реализуйте шаг "ШАГ 5" по инструкции выше');
+    await test.step('ШАГ 5: Выход из системы', async () => {
+      await logoutButton.click();
+      await expect(name).toBeEmpty();
+      await expect(email).toBeEmpty();
+      await expect(password).toBeEmpty();
+      await expect(profileSection).toBeHidden();
     });
   });
 
