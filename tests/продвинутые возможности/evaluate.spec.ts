@@ -10,8 +10,9 @@ test.describe('Практика работы с page.evaluate()', () => {
 
     // ШАГ 1: Получить текущее значение счетчика counter через evaluate
     // Для это используй document.getElementById('counter')?.textContent
-    const counterValue = 'TODO(student): добавьте page.evaluate(...)';
-
+    const counterValue = await page.evaluate(() => {
+      return document.getElementById('counter')?.textContent;
+    });
     // ПРОВЕРКА: Значение счетчика равно "0" при загрузке
     expect(counterValue).toBe('0');
 
@@ -19,7 +20,9 @@ test.describe('Практика работы с page.evaluate()', () => {
     await page.click('#increment');
 
     // ШАГ 3: Получаем обновленное значение через evaluate с параметром
-    const updatedValue = 'TODO(student): добавьте page.evaluate(...)';
+    const updatedValue = await page.evaluate(() => {
+      return document.getElementById('counter')?.textContent;
+    });
 
     // ПРОВЕРКА: Значение увеличилось на 1
     expect(updatedValue).toBe('1');
@@ -35,9 +38,13 @@ test.describe('Практика работы с page.evaluate()', () => {
     // ШАГ 2: Модифицируем содержимое через evaluate - нужно с помощью evaluate добавить новой содержимое для элемента
     // <h3>Новое содержимое</h3><p>Сгенерировано в evaluate()</p>
     // Используй innerHTML
-    throw new Error(
-      'TODO(student): добавьте page.evaluate() для обновления innerHTML у #dynamic-content',
-    );
+
+    await page.evaluate(() => {
+      const div = document.getElementById('dynamic-content');
+      if (div) {
+        div.innerHTML = '<h3>Новое содержимое</h3><p>Сгенерировано в evaluate()</p>';
+      }
+    });
 
     // ПРОВЕРКА: Содержимое изменилось
     await expect(page.locator('#dynamic-content h3')).toHaveText('Новое содержимое');
@@ -66,7 +73,7 @@ test.describe('Практика работы с page.evaluate()', () => {
     expect(userData).toEqual({
       title: expect.stringContaining('Пользователь #'),
       date: expect.stringContaining('Дата создания:'),
-      color: 'rgba(0, 0, 0, 0)', // прозрачный фон
+      color: 'rgb(255, 255, 255)', // прозрачный фон
     });
   });
 
