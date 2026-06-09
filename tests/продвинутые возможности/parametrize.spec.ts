@@ -28,6 +28,28 @@ test.describe('Параметризованные тесты формы вход
   // 4. Нажать кнопку "Войти"
   // 5. Проверить сообщение системы
   // 6. Проверить класс сообщения (success/error)
+
+  loginTestCases.forEach(({ username, password, expected }) => {
+    test(`Тест с username = ${username}, password = ${password}, expected = ${expect}`, async ({
+      page,
+    }) => {
+      const nameField = page.locator('#username');
+      const passwordField = page.locator('#password');
+      const enterButton = page.getByRole('button', { name: 'Войти' });
+      const message = page.locator('#message');
+
+      await page.goto('https://osstep.github.io/parametrize');
+      await nameField.fill(username);
+      await passwordField.fill(password);
+      await enterButton.click();
+      await expect(message).toHaveText(expected);
+      if (expected === 'Успешный вход!') {
+        await expect(message).toHaveClass(/success/);
+      } else {
+        await expect(message).toHaveClass(/error/);
+      }
+    });
+  });
 });
 
 // Тесты для калькулятора
@@ -44,4 +66,27 @@ test.describe('Параметризованные тесты калькулят�
   // 3. Ввести второе число
   // 4. Нажать кнопку операции (сложение/умножение)
   // 5. Проверить результат вычисления
+
+  calculatorTestCases.forEach(({ a, b, operation, expected }) => {
+    test(`Тест с a = ${a}. b = ${b}, operation = ${operation}, expected = ${expected}`, async ({
+      page,
+    }) => {
+      const number1 = page.locator('#num1');
+      const number2 = page.locator('#num2');
+      const addButton = page.locator('#add-btn');
+      const multiplyButton = page.locator('#multiply-btn');
+      const result = page.locator('#result');
+
+      await page.goto('https://osstep.github.io/parametrize');
+      await number1.fill(a.toFixed());
+      await number2.fill(b.toFixed());
+      if (operation === 'add') {
+        await addButton.click();
+        await expect(result).toContainText((a + b).toString());
+      } else {
+        await multiplyButton.click();
+        await expect(result).toContainText((a * b).toString());
+      }
+    });
+  });
 });
